@@ -42,15 +42,15 @@ function getRootPackageVersions() {
 const CATALOG_VERSIONS = parseCatalogVersions();
 const ROOT_VERSIONS = getRootPackageVersions();
 
-const SKIP_DIRS = ['node_modules', 'dist', '.git'];
+const SKIP_FILES = ['node_modules', 'dist', '.git', 'package.json'];
 
-function copyDir(src, dest) {
+function copyDir(src, dest, skipFiles = SKIP_FILES) {
 	fs.mkdirSync(dest, { recursive: true });
 	const entries = fs.readdirSync(src, { withFileTypes: true });
 
 	for (const entry of entries) {
-		// Skip certain directories
-		if (SKIP_DIRS.includes(entry.name)) {
+		// Skip certain files/directories
+		if (skipFiles.includes(entry.name)) {
 			continue;
 		}
 
@@ -58,7 +58,7 @@ function copyDir(src, dest) {
 		const destPath = path.join(dest, entry.name);
 
 		if (entry.isDirectory()) {
-			copyDir(srcPath, destPath);
+			copyDir(srcPath, destPath, skipFiles);
 		} else {
 			fs.copyFileSync(srcPath, destPath);
 		}
@@ -95,14 +95,14 @@ function main() {
 
 	console.log(`Creating project "${projectName}" from template "${templateName}"...`);
 
-	// 1. Copy template folder
-	copyDir(templateDir, outputDir);
+	// 1. Copy template folder (keep package.json)
+	const SKIP_TEMPLATE = ['node_modules', 'dist', '.git'];
+	copyDir(templateDir, outputDir, SKIP_TEMPLATE);
 
-	// 2. Copy shared CSS files
+	// 2. Copy shared CSS files (all files and folders, skip package.json)
 	const sharedCssDir = path.join(PACKAGES_DIR, 'shared-css');
 	const outputCssDir = path.join(outputDir, 'src', 'css');
-	fs.copyFileSync(path.join(sharedCssDir, 'reset.css'), path.join(outputCssDir, 'reset.css'));
-	fs.copyFileSync(path.join(sharedCssDir, 'global.css'), path.join(outputCssDir, 'global.css'));
+	copyDir(sharedCssDir, outputCssDir);
 
 	// 3. Update CSS imports (change from @starter/shared-css to local)
 	const indexCssPath = path.join(outputCssDir, 'index.css');
