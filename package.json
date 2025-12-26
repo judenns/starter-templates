@@ -3,7 +3,13 @@
 	"private": true,
 	"version": "1.0.0",
 	"type": "module",
+	"packageManager": "pnpm@10.26.1",
+	"engines": {
+		"node": ">=20",
+		"pnpm": ">=10"
+	},
 	"scripts": {
+		"preinstall": "npx only-allow pnpm",
 		"dev": "pnpm -r --parallel run dev",
 		"build": "pnpm -r run build",
 		"lint": "biome lint .",
