@@ -5,9 +5,13 @@ Monorepo with shared configs for frontend templates.
 ## Quick Start
 
 ```bash
-# Clone template
-npx degit user/starter-templates#vanilla-js my-app
-npx degit user/starter-templates#react-js my-app
+# Using npm/pnpm
+pnpm create @judenns/starter react my-app
+pnpm create @judenns/starter vanilla my-app
+
+# Or using degit
+npx degit judenns/starter-templates#react-js my-app
+npx degit judenns/starter-templates#vanilla-js my-app
 
 # Then
 cd my-app && pnpm install && pnpm dev
@@ -38,6 +42,7 @@ All configs auto-sync to template branches on push to main.
 
 ```
 ├── packages/
+│   ├── create-starter/   # @judenns/create-starter CLI
 │   ├── shared-css/       # Shared styles
 │   └── vite-config/      # Base Vite config
 ├── templates/
