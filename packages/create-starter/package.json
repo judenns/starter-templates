@@ -1,6 +1,6 @@
 {
 	"name": "@judenns/create-starter",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Create a new project from starter templates",
 	"type": "module",
 	"bin": {
@@ -14,6 +14,7 @@
 		"node": ">=20"
 	},
 	"dependencies": {
-		"giget": "^2.0.0"
+		"giget": "^2.0.0",
+		"prompts": "^2.4.2"
 	}
 }

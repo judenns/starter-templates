@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 import { downloadTemplate } from 'giget';
+import prompts from 'prompts';
 
 const REPO = 'judenns/starter-templates';
 const TEMPLATES = {
-	vanilla: 'vanilla-js',
-	react: 'react-js',
+	vanilla: { branch: 'vanilla-js', description: 'Vite + Vanilla JavaScript' },
+	react: { branch: 'react-js', description: 'Vite + React 19' },
 };
 
-const [template, projectName] = process.argv.slice(2);
+let [template, projectName] = process.argv.slice(2);
 
 // Show help
-if (!template || !projectName || template === '--help' || template === '-h') {
+if (template === '--help' || template === '-h') {
 	console.log(`
-Usage: pnpm create @judenns/starter <template> <project-name>
+Usage: pnpm create @judenns/starter [template] [project-name]
 
 Templates:
   vanilla    Vite + Vanilla JavaScript
@@ -22,12 +23,38 @@ Example:
   pnpm create @judenns/starter react my-app
   pnpm create @judenns/starter vanilla my-app
 `);
-	process.exit(template === '--help' || template === '-h' ? 0 : 1);
+	process.exit(0);
+}
+
+// Interactive prompts if missing arguments
+if (!template) {
+	const response = await prompts({
+		type: 'select',
+		name: 'template',
+		message: 'Select template:',
+		choices: Object.entries(TEMPLATES).map(([name, { description }]) => ({
+			title: `${name} - ${description}`,
+			value: name,
+		})),
+	});
+	template = response.template;
+	if (!template) process.exit(1);
+}
+
+if (!projectName) {
+	const response = await prompts({
+		type: 'text',
+		name: 'projectName',
+		message: 'Project name:',
+		initial: 'my-app',
+	});
+	projectName = response.projectName;
+	if (!projectName) process.exit(1);
 }
 
 // Validate template
-const branch = TEMPLATES[template];
-if (!branch) {
+const templateConfig = TEMPLATES[template];
+if (!templateConfig) {
 	console.error(`Error: Unknown template "${template}"`);
 	console.error(`Available templates: ${Object.keys(TEMPLATES).join(', ')}`);
 	process.exit(1);
@@ -37,7 +64,7 @@ if (!branch) {
 try {
 	console.log(`Creating ${projectName} with ${template} template...`);
 
-	await downloadTemplate(`github:${REPO}#${branch}`, {
+	await downloadTemplate(`github:${REPO}#${templateConfig.branch}`, {
 		dir: projectName,
 	});
 
