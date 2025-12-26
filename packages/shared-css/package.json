@@ -1,0 +1,8 @@
+{
+	"name": "@starter/shared-css",
+	"version": "1.0.0",
+	"exports": {
+		"./reset.css": "./reset.css",
+		"./global.css": "./global.css"
+	}
+}

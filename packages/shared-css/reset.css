@@ -1,0 +1,85 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-moz-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
+	text-size-adjust: none;
+}
+
+body {
+	margin: 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+blockquote,
+dl,
+dd {
+	margin-block-end: 0;
+}
+
+ul,
+ol,
+ul[role='list'],
+ol[role='list'] {
+	list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+button,
+input,
+label {
+	line-height: 1.2;
+}
+
+/* A elements that don't have a class get default styles */
+a:not([class]) {
+	text-decoration-skip-ink: auto;
+}
+
+img,
+picture {
+	display: block;
+	max-inline-size: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+	font-family: inherit;
+	font-size: inherit;
+}
+
+button {
+	box-shadow: none;
+	border: none;
+	cursor: pointer;
+	border-radius: 0;
+	white-space: nowrap;
+}
+
+fieldset {
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* Make sure textareas without a rows attribute are not tiny */
+textarea:not([rows]) {
+	min-height: 10em;
+}

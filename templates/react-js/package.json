@@ -1,0 +1,32 @@
+{
+	"name": "@starter/react-js",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "biome lint ./src",
+		"lint:fix": "biome lint --write ./src",
+		"format": "biome format --write ./src && prettier --write \"./src/**/*.{html,css}\"",
+		"ci": "biome ci ./src",
+		"clean": "rm -rf dist",
+		"reinstall": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install"
+	},
+	"dependencies": {
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0"
+	},
+	"devDependencies": {
+		"@starter/shared-css": "workspace:*",
+		"@starter/vite-config": "workspace:*",
+		"@vitejs/plugin-react": "^4.3.0",
+		"autoprefixer": "catalog:",
+		"cssnano": "catalog:",
+		"postcss": "catalog:",
+		"postcss-import": "catalog:",
+		"postcss-preset-env": "catalog:",
+		"vite": "catalog:"
+	}
+}

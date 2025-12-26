@@ -1,0 +1,44 @@
+name: Publish Standalone Templates
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        template: [vanilla-js, react-js]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build standalone template
+        run: |
+          node scripts/create-project.js ${{ matrix.template }} standalone-${{ matrix.template }}
+          # Remove git from generated project (will init fresh)
+          rm -rf standalone-${{ matrix.template }}/.git
+
+      - name: Deploy to branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: ${{ matrix.template }}
+          folder: standalone-${{ matrix.template }}
+          clean: true
+          commit-message: "Update ${{ matrix.template }} template"

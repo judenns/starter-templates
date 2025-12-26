@@ -1,0 +1,8 @@
+{
+	"name": "@starter/vite-config",
+	"version": "1.0.0",
+	"type": "module",
+	"exports": {
+		".": "./base.js"
+	}
+}
