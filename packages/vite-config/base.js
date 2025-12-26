@@ -11,7 +11,6 @@ export function createBaseConfig(dirname) {
 			alias: {
 				'@': path.resolve(dirname, 'src'),
 			},
-			dedupe: ['react', 'react-dom'],
 		},
 		build: {
 			target: 'baseline-widely-available',

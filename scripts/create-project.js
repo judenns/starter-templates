@@ -138,8 +138,12 @@ function main() {
 	}
 
 	// Add biome and prettier (from root package.json)
-	pkg.devDependencies['@biomejs/biome'] = ROOT_VERSIONS['@biomejs/biome'] || '^2.0.0';
-	pkg.devDependencies['prettier'] = ROOT_VERSIONS['prettier'] || '^3.0.0';
+	if (!ROOT_VERSIONS['@biomejs/biome'] || !ROOT_VERSIONS['prettier']) {
+		console.error('Error: Missing @biomejs/biome or prettier in root package.json');
+		process.exit(1);
+	}
+	pkg.devDependencies['@biomejs/biome'] = ROOT_VERSIONS['@biomejs/biome'];
+	pkg.devDependencies['prettier'] = ROOT_VERSIONS['prettier'];
 
 	// Add browserslist
 	pkg.browserslist = ['defaults and fully supports es6-module', 'not dead'];

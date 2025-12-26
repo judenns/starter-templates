@@ -19,6 +19,14 @@ pnpm dev
 
 > Thay `your-username` bằng GitHub username của bạn.
 
+### Local Development (trong monorepo)
+
+```bash
+# Tạo standalone project từ template
+pnpm create-project vanilla-js my-project
+pnpm create-project react-js my-project
+```
+
 ## Available Templates
 
 | Template | Branch | Command |
