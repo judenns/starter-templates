@@ -4,9 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-A monorepo providing reusable frontend starter templates. Templates are auto-published to separate GitHub branches, allowing developers to scaffold new projects via `degit`.
+A monorepo providing reusable frontend starter templates. Scaffold via `pnpm create @judenns/starter` or `degit`.
 
-**Current templates:** `vanilla-js`, `react-js` (both Vite-based)
+**Current templates:** `vanilla-js`, `react-js` (Vite + React 19)
 
 ## Essential Commands
 
@@ -30,6 +30,7 @@ pnpm create-project <template-name> <output-dir>
 
 ```
 packages/
+├── create-starter/      # @judenns/create-starter CLI
 ├── shared-css/          # @starter/shared-css - reset.css, global.css
 └── vite-config/         # @starter/vite-config - createBaseConfig()
 

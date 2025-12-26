@@ -5,16 +5,15 @@ Monorepo with shared configs for frontend templates.
 ## Quick Start
 
 ```bash
-# Using npm/pnpm
+# Interactive (recommended)
+pnpm create @judenns/starter
+
+# Or direct
 pnpm create @judenns/starter react my-app
 pnpm create @judenns/starter vanilla my-app
 
-# Or using degit
+# Or degit
 npx degit judenns/starter-templates#react-js my-app
-npx degit judenns/starter-templates#vanilla-js my-app
-
-# Then
-cd my-app && pnpm install && pnpm dev
 ```
 
 ## Templates
@@ -22,7 +21,7 @@ cd my-app && pnpm install && pnpm dev
 | Template | Branch | Stack |
 |----------|--------|-------|
 | Vanilla JS | `vanilla-js` | Vite + JS |
-| React JS | `react-js` | Vite + React |
+| React JS | `react-js` | Vite + React 19 |
 
 ## Shared Configs
 
@@ -42,7 +41,7 @@ All configs auto-sync to template branches on push to main.
 
 ```
 ├── packages/
-│   ├── create-starter/   # @judenns/create-starter CLI
+│   ├── create-starter/   # CLI (npm: @judenns/create-starter)
 │   ├── shared-css/       # Shared styles
 │   └── vite-config/      # Base Vite config
 ├── templates/
@@ -56,7 +55,7 @@ All configs auto-sync to template branches on push to main.
 ```bash
 pnpm install              # Install deps
 pnpm dev                  # Run all templates
-pnpm create-project vanilla-js my-app  # Create standalone
+pnpm create-project vanilla-js my-app  # Dev only, users use: pnpm create @judenns/starter
 ```
 
 ## Add New Template
