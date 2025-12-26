@@ -10,15 +10,37 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const TEMPLATES_DIR = path.join(ROOT_DIR, 'templates');
 const PACKAGES_DIR = path.join(ROOT_DIR, 'packages');
 
-// Catalog versions từ pnpm-workspace.yaml
-const CATALOG_VERSIONS = {
-	vite: '^7.3.0',
-	autoprefixer: '^10.4.23',
-	cssnano: '^7.1.2',
-	postcss: '^8.5.6',
-	'postcss-import': '^16.1.1',
-	'postcss-preset-env': '^10.5.0',
-};
+// Parse catalog versions từ pnpm-workspace.yaml
+function parseCatalogVersions() {
+	const content = fs.readFileSync(path.join(ROOT_DIR, 'pnpm-workspace.yaml'), 'utf-8');
+	const versions = {};
+	let inCatalog = false;
+
+	for (const line of content.split('\n')) {
+		if (line.startsWith('catalog:')) {
+			inCatalog = true;
+			continue;
+		}
+		if (inCatalog && line.match(/^\s{2}\S/)) {
+			const match = line.match(/^\s{2}(.+?):\s*"?([^"]+)"?$/);
+			if (match) {
+				versions[match[1]] = match[2];
+			}
+		} else if (inCatalog && line.match(/^\S/)) {
+			break; // Exit catalog section
+		}
+	}
+	return versions;
+}
+
+// Đọc versions từ root package.json
+function getRootPackageVersions() {
+	const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
+	return pkg.devDependencies || {};
+}
+
+const CATALOG_VERSIONS = parseCatalogVersions();
+const ROOT_VERSIONS = getRootPackageVersions();
 
 const SKIP_DIRS = ['node_modules', 'dist', '.git'];
 
@@ -115,9 +137,9 @@ function main() {
 		}
 	}
 
-	// Add biome and prettier (from root)
-	pkg.devDependencies['@biomejs/biome'] = '^2.3.10';
-	pkg.devDependencies['prettier'] = '^3.7.4';
+	// Add biome and prettier (from root package.json)
+	pkg.devDependencies['@biomejs/biome'] = ROOT_VERSIONS['@biomejs/biome'] || '^2.0.0';
+	pkg.devDependencies['prettier'] = ROOT_VERSIONS['prettier'] || '^3.0.0';
 
 	// Add browserslist
 	pkg.browserslist = ['defaults and fully supports es6-module', 'not dead'];
