@@ -72,7 +72,9 @@ function main() {
 		console.log('Usage: pnpm create-project <template> <project-name>');
 		console.log('');
 		console.log('Available templates:');
-		const templates = fs.readdirSync(TEMPLATES_DIR);
+		const templates = fs.readdirSync(TEMPLATES_DIR, { withFileTypes: true })
+			.filter((d) => d.isDirectory())
+			.map((d) => d.name);
 		templates.forEach((t) => console.log(`  - ${t}`));
 		process.exit(1);
 	}
