@@ -18,22 +18,22 @@ npx degit judenns/starter-templates#react-js my-app
 
 ## Templates
 
-| Template | Branch | Stack |
-|----------|--------|-------|
-| Vanilla JS | `vanilla-js` | Vite + JS |
-| React JS | `react-js` | Vite + React 19 |
+| Template   | Branch       | Stack           |
+| ---------- | ------------ | --------------- |
+| Vanilla JS | `vanilla-js` | Vite + JS       |
+| React JS   | `react-js`   | Vite + React 19 |
 
 ## Shared Configs
 
 All configs auto-sync to template branches on push to main.
 
-| Config | File | Purpose |
-|--------|------|---------|
-| Linting | `biome.json` | JS/TS/JSON lint + format |
-| Formatting | `.prettierrc.json` | HTML/CSS formatting |
-| PostCSS | `postcss.config.js` | Nesting, autoprefixer, cssnano |
-| Vite | `packages/vite-config/` | Build config with path alias |
-| CSS | `packages/shared-css/` | Reset + global styles |
+| Config     | File                    | Purpose                        |
+| ---------- | ----------------------- | ------------------------------ |
+| Linting    | `biome.json`            | JS/TS/JSON lint + format       |
+| Formatting | `.prettierrc.json`      | HTML/CSS formatting            |
+| PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano |
+| Vite       | `packages/vite-config/` | Build config with path alias   |
+| CSS        | `packages/shared-css/`  | Reset + global styles          |
 
 **Settings**: Tabs · 100 width · Single quotes · Semicolons
 
@@ -64,3 +64,7 @@ pnpm create-project vanilla-js my-app  # Dev only, users use: pnpm create @juden
 2. Update `package.json` name and deps
 3. Add to `.github/workflows/publish-templates.yml` matrix
 4. Push → auto-creates branch
+
+## License
+
+MIT License
