@@ -22,3 +22,13 @@ body {
 	font-weight: 400;
 	min-height: 100vh;
 }
+
+select {
+	line-height: 1.5;
+}
+
+*:focus-visible {
+	outline-offset: 2px;
+	outline-width: 2px;
+	outline-style: dashed;
+}
