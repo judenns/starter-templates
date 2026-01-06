@@ -18,22 +18,22 @@ npx degit judenns/starter-templates#react-js my-app
 
 ## Templates
 
-| Template   | Branch       | Stack           |
-| ---------- | ------------ | --------------- |
-| Vanilla JS | `vanilla-js` | Vite + JS       |
-| React JS   | `react-js`   | Vite + React 19 |
+| Template   | Branch       | Stack                 |
+| ---------- | ------------ | --------------------- |
+| Vanilla JS | `vanilla-js` | Vite 7.3 + JS         |
+| React JS   | `react-js`   | Vite 7.3 + React 19.x |
 
 ## Shared Configs
 
 All configs auto-sync to template branches on push to main.
 
-| Config     | File                    | Purpose                        |
-| ---------- | ----------------------- | ------------------------------ |
-| Linting    | `biome.json`            | JS/TS/JSON lint + format       |
-| Formatting | `.prettierrc.json`      | HTML/CSS formatting            |
-| PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano |
-| Vite       | `packages/vite-config/` | Build config with path alias   |
-| CSS        | `packages/shared-css/`  | Reset + global styles          |
+| Config     | File                    | Purpose                            |
+| ---------- | ----------------------- | ---------------------------------- |
+| Linting    | `biome.json`            | Biome 2.3 - JS/TS/JSON lint        |
+| Formatting | `.prettierrc.json`      | Prettier 3.7 - HTML/CSS            |
+| PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano     |
+| Vite       | `packages/vite-config/` | Build config with path alias       |
+| CSS        | `packages/shared-css/`  | Reset + global styles              |
 
 **Settings**: Tabs · 100 width · Single quotes · Semicolons
 
