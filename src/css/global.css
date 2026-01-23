@@ -27,8 +27,13 @@ select {
 	line-height: 1.5;
 }
 
-*:focus-visible {
+*:not(input):focus-visible {
 	outline-offset: 2px;
 	outline-width: 2px;
 	outline-style: dashed;
+}
+
+input:focus-visible {
+	outline-offset: 0px;
+	outline-width: 2px;
 }
