@@ -1,7 +1,7 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig, mergeConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { createBaseConfig } from '@starter/vite-config';
+import react from '@vitejs/plugin-react';
+import { defineConfig, mergeConfig } from 'vite';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 

@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig, mergeConfig } from 'vite';
 import { createBaseConfig } from '@starter/vite-config';
+import { defineConfig, mergeConfig } from 'vite';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 

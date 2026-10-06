@@ -6,15 +6,24 @@
 	"bin": {
 		"create-starter": "./index.js"
 	},
-	"files": ["index.js"],
-	"keywords": ["create", "starter", "template", "vite", "react", "vanilla"],
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"create",
+		"starter",
+		"template",
+		"vite",
+		"react",
+		"vanilla"
+	],
 	"author": "judenns",
 	"license": "MIT",
 	"engines": {
-		"node": ">=20"
+		"node": ">=22.12"
 	},
 	"dependencies": {
-		"giget": "^2.0.0",
+		"giget": "^3.3.1",
 		"prompts": "^2.4.2"
 	}
 }

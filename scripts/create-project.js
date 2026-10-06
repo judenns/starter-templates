@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -72,10 +72,11 @@ function main() {
 		console.log('Usage: pnpm create-project <template> <project-name>');
 		console.log('');
 		console.log('Available templates:');
-		const templates = fs.readdirSync(TEMPLATES_DIR, { withFileTypes: true })
+		const templates = fs
+			.readdirSync(TEMPLATES_DIR, { withFileTypes: true })
 			.filter((d) => d.isDirectory())
 			.map((d) => d.name);
-		templates.forEach((t) => console.log(`  - ${t}`));
+		for (const t of templates) console.log(`  - ${t}`);
 		process.exit(1);
 	}
 
@@ -113,13 +114,22 @@ function main() {
 	fs.writeFileSync(indexCssPath, indexCss);
 
 	// 4. Copy root configs
-	fs.copyFileSync(path.join(ROOT_DIR, 'postcss.config.js'), path.join(outputDir, 'postcss.config.js'));
-	fs.copyFileSync(path.join(ROOT_DIR, '.prettierrc.json'), path.join(outputDir, '.prettierrc.json'));
+	fs.copyFileSync(
+		path.join(ROOT_DIR, 'postcss.config.js'),
+		path.join(outputDir, 'postcss.config.js'),
+	);
+	fs.copyFileSync(
+		path.join(ROOT_DIR, '.prettierrc.json'),
+		path.join(outputDir, '.prettierrc.json'),
+	);
 	fs.copyFileSync(path.join(ROOT_DIR, '.gitignore'), path.join(outputDir, '.gitignore'));
 
 	// 5. Inline biome.json (remove extends, copy full config)
 	const rootBiomeConfig = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'biome.json'), 'utf-8'));
-	fs.writeFileSync(path.join(outputDir, 'biome.json'), JSON.stringify(rootBiomeConfig, null, '\t') + '\n');
+	fs.writeFileSync(
+		path.join(outputDir, 'biome.json'),
+		`${JSON.stringify(rootBiomeConfig, null, '\t')}\n`,
+	);
 
 	// 6. Update package.json
 	const pkgPath = path.join(outputDir, 'package.json');
@@ -140,25 +150,23 @@ function main() {
 	}
 
 	// Add biome and prettier (from root package.json)
-	if (!ROOT_VERSIONS['@biomejs/biome'] || !ROOT_VERSIONS['prettier']) {
+	if (!ROOT_VERSIONS['@biomejs/biome'] || !ROOT_VERSIONS.prettier) {
 		console.error('Error: Missing @biomejs/biome or prettier in root package.json');
 		process.exit(1);
 	}
 	pkg.devDependencies['@biomejs/biome'] = ROOT_VERSIONS['@biomejs/biome'];
-	pkg.devDependencies['prettier'] = ROOT_VERSIONS['prettier'];
+	pkg.devDependencies.prettier = ROOT_VERSIONS.prettier;
 
 	// Add browserslist
 	pkg.browserslist = ['defaults and fully supports es6-module', 'not dead'];
 
-	fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, '\t') + '\n');
+	fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, '\t')}\n`);
 
 	// 7. Inline vite.config.js
 	const viteConfigPath = path.join(outputDir, 'vite.config.js');
-	const baseConfigPath = path.join(PACKAGES_DIR, 'vite-config', 'base.js');
-	const baseConfig = fs.readFileSync(baseConfigPath, 'utf-8');
 
 	// Read template vite config to check for plugins
-	let templateViteConfig = fs.readFileSync(viteConfigPath, 'utf-8');
+	const templateViteConfig = fs.readFileSync(viteConfigPath, 'utf-8');
 	const hasReactPlugin = templateViteConfig.includes("import react from '@vitejs/plugin-react'");
 
 	// Generate standalone vite config

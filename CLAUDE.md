@@ -20,7 +20,7 @@ pnpm build                # Build all templates
 pnpm lint                 # Lint with Biome
 pnpm lint:fix             # Auto-fix lint issues
 pnpm format               # Format with Biome (JS/JSON) + Prettier (HTML/CSS)
-pnpm ci                   # CI mode check (Biome)
+pnpm run ci               # CI mode check (Biome) — `pnpm ci` is a pnpm built-in
 
 # Create standalone project (for testing)
 pnpm create-project <template-name> <output-dir>
