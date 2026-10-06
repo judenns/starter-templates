@@ -18,22 +18,24 @@ npx degit judenns/starter-templates#react-js my-app
 
 ## Templates
 
-| Template   | Branch       | Stack                 |
-| ---------- | ------------ | --------------------- |
-| Vanilla JS | `vanilla-js` | Vite 7.3 + JS         |
-| React JS   | `react-js`   | Vite 7.3 + React 19.x |
+| Template   | Branch       | Stack               |
+| ---------- | ------------ | ------------------- |
+| Vanilla JS | `vanilla-js` | Vite 8 + JS         |
+| React JS   | `react-js`   | Vite 8 + React 19.3 |
+
+**Requires**: Node.js ≥ 22.12 · pnpm ≥ 10
 
 ## Shared Configs
 
 All configs auto-sync to template branches on push to main.
 
-| Config     | File                    | Purpose                            |
-| ---------- | ----------------------- | ---------------------------------- |
-| Linting    | `biome.json`            | Biome 2.3 - JS/TS/JSON lint        |
-| Formatting | `.prettierrc.json`      | Prettier 3.7 - HTML/CSS            |
-| PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano     |
-| Vite       | `packages/vite-config/` | Build config with path alias       |
-| CSS        | `packages/shared-css/`  | Reset + global styles              |
+| Config     | File                    | Purpose                        |
+| ---------- | ----------------------- | ------------------------------ |
+| Linting    | `biome.json`            | Biome 2.5 - JS/TS/JSON lint    |
+| Formatting | `.prettierrc.json`      | Prettier 3.9 - HTML/CSS        |
+| PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano |
+| Vite       | `packages/vite-config/` | Build config with path alias   |
+| CSS        | `packages/shared-css/`  | Reset + global styles          |
 
 **Settings**: Tabs · 100 width · Single quotes · Semicolons
 
@@ -55,15 +57,20 @@ All configs auto-sync to template branches on push to main.
 ```bash
 pnpm install              # Install deps
 pnpm dev                  # Run all templates
+pnpm build                # Build all templates
+pnpm lint                 # Lint with Biome
+pnpm format               # Format with Biome + Prettier
+pnpm run ci               # CI check (`pnpm ci` is a pnpm built-in)
 pnpm create-project vanilla-js my-app  # Dev only, users use: pnpm create @judenns/starter
 ```
 
 ## Add New Template
 
 1. `cp -r templates/vanilla-js templates/new-template`
-2. Update `package.json` name and deps
-3. Add to `.github/workflows/publish-templates.yml` matrix
-4. Push → auto-creates branch
+2. Update `package.json` name and deps (shared versions live in the `pnpm-workspace.yaml` catalog)
+3. Keep the template's `biome.json` as a nested config: `{ "root": false, "extends": "//" }`
+4. Add to `.github/workflows/publish-templates.yml` matrix
+5. Push → auto-creates branch
 
 ## License
 
