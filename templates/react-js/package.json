@@ -21,11 +21,9 @@
 	"devDependencies": {
 		"@starter/shared-css": "workspace:*",
 		"@starter/vite-config": "workspace:*",
-		"@vitejs/plugin-react": "^6.1.2",
-		"autoprefixer": "catalog:",
+		"@vitejs/plugin-react": "^6.0.0",
 		"cssnano": "catalog:",
 		"postcss": "catalog:",
-		"postcss-import": "catalog:",
 		"postcss-preset-env": "catalog:",
 		"vite": "catalog:"
 	}

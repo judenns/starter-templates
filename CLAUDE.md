@@ -46,7 +46,11 @@ scripts/
 - Templates use `workspace:*` for @starter packages
 - pnpm catalog in `pnpm-workspace.yaml` for shared dependency versions
 - Templates reference catalog versions via `catalog:` syntax
-- GitHub Action auto-publishes each template to its own branch on push to main
+- GitHub Action verifies (lint + build, monorepo and standalone) then publishes each template to its own branch on push to main
+- `create-project.js` generates the standalone `vite.config.js` by inlining `packages/vite-config/base.js` into the template's config — never hand-write it
+- Browser targets: `browserslist` in root `package.json` (`baseline widely available on <date>`) must match Vite's `baseline-widely-available` `build.target`; update the date on a Vite major
+- Keep dependency ranges at major level (`^8.0.0`): pnpm 12's `minimumReleaseAge` (24h) rejects ranges whose floor is a just-published version
+- Template `biome.json` must stay nested: `{ "root": false, "extends": "//" }`
 
 ## Code Style
 
@@ -61,3 +65,8 @@ scripts/
 1. Create `templates/<name>/` with `package.json`, `vite.config.js`, `index.html`, `src/`
 2. Use `@starter/vite-config` and `@starter/shared-css` as workspace dependencies
 3. Add template name to the workflow matrix in `.github/workflows/publish-templates.yml`
+
+## Publishing the CLI
+
+`@judenns/create-starter` is not auto-published. Bump its version, then from the repo root:
+`npm publish ./packages/create-starter --access public`

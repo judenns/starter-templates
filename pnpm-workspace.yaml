@@ -3,9 +3,7 @@ packages:
   - 'templates/*'
 
 catalog:
-  vite: "^8.1.6"
-  autoprefixer: "^10.6.1"
-  cssnano: "^9.3.2"
-  postcss: "^8.5.29"
-  postcss-import: "^17.0.0"
-  postcss-preset-env: "^11.6.1"
+  vite: "^8.0.0"
+  cssnano: "^9.0.0"
+  postcss: "^8.5.0"
+  postcss-preset-env: "^11.0.0"

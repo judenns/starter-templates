@@ -17,10 +17,8 @@
 	"devDependencies": {
 		"@starter/shared-css": "workspace:*",
 		"@starter/vite-config": "workspace:*",
-		"autoprefixer": "catalog:",
 		"cssnano": "catalog:",
 		"postcss": "catalog:",
-		"postcss-import": "catalog:",
 		"postcss-preset-env": "catalog:",
 		"vite": "catalog:"
 	}

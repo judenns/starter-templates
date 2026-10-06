@@ -67,7 +67,7 @@ jobs:
           cd "$RUNNER_TEMP/verify"
           pnpm install --ignore-workspace
           pnpm build
-          pnpm run ci
+          pnpm exec biome ci .
 
       - name: Deploy to branch
         uses: JamesIves/github-pages-deploy-action@v4

@@ -1,6 +1,5 @@
 export default {
 	plugins: {
-		'postcss-import': {},
 		'postcss-preset-env': {
 			stage: 2,
 			features: {
@@ -8,7 +7,6 @@ export default {
 				'custom-media-queries': true,
 			},
 		},
-		autoprefixer: {},
 		...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
 	},
 };

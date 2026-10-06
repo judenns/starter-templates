@@ -33,14 +33,9 @@ function parseCatalogVersions() {
 	return versions;
 }
 
-// Đọc versions từ root package.json
-function getRootPackageVersions() {
-	const pkg = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
-	return pkg.devDependencies || {};
-}
-
+const ROOT_PKG = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'package.json'), 'utf-8'));
 const CATALOG_VERSIONS = parseCatalogVersions();
-const ROOT_VERSIONS = getRootPackageVersions();
+const ROOT_VERSIONS = ROOT_PKG.devDependencies || {};
 
 const SKIP_FILES = ['node_modules', 'dist', '.git', 'package.json'];
 
@@ -63,6 +58,36 @@ function copyDir(src, dest, skipFiles = SKIP_FILES) {
 			fs.copyFileSync(srcPath, destPath);
 		}
 	}
+}
+
+// Tách các dòng import (single-line) khỏi phần còn lại của file
+function splitImports(source) {
+	const imports = [];
+	const body = [];
+	for (const line of source.split('\n')) {
+		(line.startsWith('import ') ? imports : body).push(line);
+	}
+	return { imports, body: body.join('\n').trim() };
+}
+
+// Inline createBaseConfig() từ @starter/vite-config vào vite.config.js của template,
+// để base.js là nguồn duy nhất cho config Vite
+function buildStandaloneViteConfig(templateSource, baseSource) {
+	const base = splitImports(baseSource);
+	const template = splitImports(templateSource);
+	const templateImports = template.imports.filter((line) => !line.includes('@starter/vite-config'));
+
+	// Sắp xếp giống Biome organizeImports: node: builtins trước, sau đó theo tên module
+	const sourceOf = (line) => line.match(/from '([^']+)'/)[1];
+	const imports = [...new Set([...base.imports, ...templateImports])].sort((a, b) => {
+		const [sa, sb] = [sourceOf(a), sourceOf(b)];
+		const [na, nb] = [sa.startsWith('node:'), sb.startsWith('node:')];
+		if (na !== nb) return na ? -1 : 1;
+		return sa < sb ? -1 : sa > sb ? 1 : 0;
+	});
+
+	const baseBody = base.body.replace(/^export function /m, 'function ');
+	return `${imports.join('\n')}\n\n${baseBody}\n\n${template.body}\n`;
 }
 
 function main() {
@@ -124,12 +149,8 @@ function main() {
 	);
 	fs.copyFileSync(path.join(ROOT_DIR, '.gitignore'), path.join(outputDir, '.gitignore'));
 
-	// 5. Inline biome.json (remove extends, copy full config)
-	const rootBiomeConfig = JSON.parse(fs.readFileSync(path.join(ROOT_DIR, 'biome.json'), 'utf-8'));
-	fs.writeFileSync(
-		path.join(outputDir, 'biome.json'),
-		`${JSON.stringify(rootBiomeConfig, null, '\t')}\n`,
-	);
+	// 5. Copy root biome.json as-is (replaces the template's nested config)
+	fs.copyFileSync(path.join(ROOT_DIR, 'biome.json'), path.join(outputDir, 'biome.json'));
 
 	// 6. Update package.json
 	const pkgPath = path.join(outputDir, 'package.json');
@@ -157,63 +178,21 @@ function main() {
 	pkg.devDependencies['@biomejs/biome'] = ROOT_VERSIONS['@biomejs/biome'];
 	pkg.devDependencies.prettier = ROOT_VERSIONS.prettier;
 
-	// Add browserslist
-	pkg.browserslist = ['defaults and fully supports es6-module', 'not dead'];
+	// Add browserslist (single source: root package.json, matches Vite's build.target)
+	pkg.browserslist = ROOT_PKG.browserslist;
 
 	fs.writeFileSync(pkgPath, `${JSON.stringify(pkg, null, '\t')}\n`);
 
-	// 7. Inline vite.config.js
+	// 7. Inline vite.config.js (base config from @starter/vite-config + template config)
 	const viteConfigPath = path.join(outputDir, 'vite.config.js');
-
-	// Read template vite config to check for plugins
-	const templateViteConfig = fs.readFileSync(viteConfigPath, 'utf-8');
-	const hasReactPlugin = templateViteConfig.includes("import react from '@vitejs/plugin-react'");
-
-	// Generate standalone vite config
-	let standaloneViteConfig;
-	if (hasReactPlugin) {
-		standaloneViteConfig = `import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-
-export default defineConfig({
-	plugins: [react()],
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, 'src'),
-		},
-		dedupe: ['react', 'react-dom'],
-	},
-	build: {
-		target: 'baseline-widely-available',
-		cssMinify: false,
-	},
-});
-`;
-	} else {
-		standaloneViteConfig = `import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vite';
-
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-
-export default defineConfig({
-	resolve: {
-		alias: {
-			'@': path.resolve(__dirname, 'src'),
-		},
-	},
-	build: {
-		target: 'baseline-widely-available',
-		cssMinify: false,
-	},
-});
-`;
-	}
-	fs.writeFileSync(viteConfigPath, standaloneViteConfig);
+	const baseConfigPath = path.join(PACKAGES_DIR, 'vite-config', 'base.js');
+	fs.writeFileSync(
+		viteConfigPath,
+		buildStandaloneViteConfig(
+			fs.readFileSync(viteConfigPath, 'utf-8'),
+			fs.readFileSync(baseConfigPath, 'utf-8'),
+		),
+	);
 
 	// 8. Init git
 	try {

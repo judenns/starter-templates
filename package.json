@@ -3,10 +3,10 @@
 	"private": true,
 	"version": "1.0.0",
 	"type": "module",
-	"packageManager": "pnpm@10.26.1",
+	"packageManager": "pnpm@12.9.1",
 	"engines": {
 		"node": ">=22.12",
-		"pnpm": ">=10"
+		"pnpm": ">=12"
 	},
 	"scripts": {
 		"preinstall": "npx only-allow pnpm",
@@ -23,7 +23,6 @@
 		"prettier": "^3.9.9"
 	},
 	"browserslist": [
-		"defaults and fully supports es6-module",
-		"not dead"
+		"baseline widely available on 2026-01-01"
 	]
 }

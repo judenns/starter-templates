@@ -13,6 +13,8 @@ export function createBaseConfig(dirname) {
 			},
 		},
 		build: {
+			// Khớp với browserslist trong package.json ("baseline widely available on <date>").
+			// Khi nâng major Vite, cập nhật ngày theo migration guide của Vite.
 			target: 'baseline-widely-available',
 			cssMinify: false,
 		},
