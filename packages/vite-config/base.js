@@ -15,7 +15,6 @@ export function createBaseConfig(dirname) {
 		build: {
 			target: 'baseline-widely-available',
 			cssMinify: false,
-			sourcemap: process.env.NODE_ENV === 'production' ? 'hidden' : true,
 		},
 	};
 }

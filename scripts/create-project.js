@@ -190,7 +190,6 @@ export default defineConfig({
 	build: {
 		target: 'baseline-widely-available',
 		cssMinify: false,
-		sourcemap: process.env.NODE_ENV === 'production' ? 'hidden' : true,
 	},
 });
 `;
@@ -210,7 +209,6 @@ export default defineConfig({
 	build: {
 		target: 'baseline-widely-available',
 		cssMinify: false,
-		sourcemap: process.env.NODE_ENV === 'production' ? 'hidden' : true,
 	},
 });
 `;

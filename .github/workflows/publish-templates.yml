@@ -6,7 +6,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm run ci
+
+      - name: Build templates
+        run: pnpm build
+
   publish:
+    needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -34,6 +59,13 @@ jobs:
           node scripts/create-project.js ${{ matrix.template }} standalone-${{ matrix.template }}
           # Remove git from generated project (will init fresh)
           rm -rf standalone-${{ matrix.template }}/.git
+
+      - name: Verify standalone template builds
+        working-directory: standalone-${{ matrix.template }}
+        run: |
+          pnpm install --ignore-workspace
+          pnpm build
+          rm -rf node_modules dist
 
       - name: Deploy to branch
         uses: JamesIves/github-pages-deploy-action@v4

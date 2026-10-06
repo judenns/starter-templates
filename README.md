@@ -27,14 +27,15 @@ npx degit judenns/starter-templates#react-js my-app
 
 ## Shared Configs
 
-All configs auto-sync to template branches on push to main.
+All configs auto-sync to template branches on push to main. The workflow lints and builds everything first,
+and only publishes if every template (monorepo and standalone) builds.
 
 | Config     | File                    | Purpose                        |
 | ---------- | ----------------------- | ------------------------------ |
 | Linting    | `biome.json`            | Biome 2.5 - JS/TS/JSON lint    |
 | Formatting | `.prettierrc.json`      | Prettier 3.9 - HTML/CSS        |
 | PostCSS    | `postcss.config.js`     | Nesting, autoprefixer, cssnano |
-| Vite       | `packages/vite-config/` | Build config with path alias   |
+| Vite       | `packages/vite-config/` | Path alias, no prod sourcemaps |
 | CSS        | `packages/shared-css/`  | Reset + global styles          |
 
 **Settings**: Tabs · 100 width · Single quotes · Semicolons
@@ -49,7 +50,7 @@ All configs auto-sync to template branches on push to main.
 ├── templates/
 │   ├── vanilla-js/       # → Branch: vanilla-js
 │   └── react-js/         # → Branch: react-js
-└── .github/workflows/    # Auto-publish on push
+└── .github/workflows/    # Verify + auto-publish on push
 ```
 
 ## Development
@@ -71,6 +72,18 @@ pnpm create-project vanilla-js my-app  # Dev only, users use: pnpm create @juden
 3. Keep the template's `biome.json` as a nested config: `{ "root": false, "extends": "//" }`
 4. Add to `.github/workflows/publish-templates.yml` matrix
 5. Push → auto-creates branch
+
+## Publish the CLI
+
+Template branches update automatically, but the `@judenns/create-starter` npm package does not.
+Publish it manually when `packages/create-starter/` changes:
+
+```bash
+# 1. Bump "version" in packages/create-starter/package.json, then commit
+# 2. Publish from the repo root (the root package.json is private on purpose)
+npm publish ./packages/create-starter --access public   # add --otp=<code> if 2FA is on
+npm view @judenns/create-starter version                 # verify
+```
 
 ## License
 
