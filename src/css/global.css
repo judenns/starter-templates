@@ -1,8 +1,10 @@
+/* Custom font — uncomment and fill in:
 @font-face {
-	font-family: '';
-	src: url('');
+	font-family: 'MyFont';
+	src: url('/fonts/my-font.woff2') format('woff2');
 	font-display: swap;
 }
+*/
 
 body {
 	color: #111;
