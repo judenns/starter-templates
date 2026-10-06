@@ -61,11 +61,13 @@ jobs:
           rm -rf standalone-${{ matrix.template }}/.git
 
       - name: Verify standalone template builds
-        working-directory: standalone-${{ matrix.template }}
+        # Build a copy so install artifacts (pnpm-lock.yaml, node_modules) never get published
         run: |
+          cp -r standalone-${{ matrix.template }} "$RUNNER_TEMP/verify"
+          cd "$RUNNER_TEMP/verify"
           pnpm install --ignore-workspace
           pnpm build
-          rm -rf node_modules dist
+          pnpm run ci
 
       - name: Deploy to branch
         uses: JamesIves/github-pages-deploy-action@v4
