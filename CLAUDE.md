@@ -84,7 +84,18 @@ scripts/
 4. If a toolchain needs extras for it, add `toolchains/<toolchain>/<name>/`
 5. Verify every combination: `pnpm create-project <name> <toolchain> <dir>`, then `pnpm install && pnpm build && pnpm run check` in it
 
-## Publishing the CLI
+## Releasing
 
-`@judenns/create-starter` is not auto-published. Bump its version, then from the repo root:
-`npm publish ./packages/create-starter --access public`
+1. Merge to `main` → CI regenerates and publishes every `<template>-<toolchain>` branch. Template changes need no CLI release.
+2. Only if `packages/create-starter/` changed: bump its version, then from the repo root
+   `npm publish ./packages/create-starter --access public` (add `--otp=<code>` with 2FA).
+3. **Never delete or rename a template branch the same day as a CLI release.** pnpm 12 skips packages younger than 24h, so `pnpm create @judenns/starter` keeps running the _previous_ CLI for a day — its branches must still exist. Remove old branches after 24h.
+
+## Updating Dependencies
+
+- Shared versions live in the `catalog` of `pnpm-workspace.yaml`; Vite+ versions in `toolchains/vite-plus/package.patch.json` **and** `toolchains/vite-plus/files/pnpm-workspace.yaml` (keep in sync)
+- Configure only what differs from a tool's defaults
+
+## User-Facing Docs
+
+`README.md` is for people using a generated project only (quick start, commands, editor setup). Keep maintainer details here, not in the README.
