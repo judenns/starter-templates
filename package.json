@@ -12,17 +12,17 @@
 		"preinstall": "npx only-allow pnpm",
 		"dev": "pnpm -r --parallel run dev",
 		"build": "pnpm -r run build",
+		"typecheck": "pnpm -r run typecheck",
 		"lint": "biome lint .",
 		"lint:fix": "biome lint --write .",
-		"format": "biome format --write . && prettier --write \"**/*.{html,css}\"",
-		"ci": "biome ci .",
+		"format": "biome format --write . && prettier --write \"**/*.{html,css,astro}\"",
+		"check": "biome ci . && prettier --check \"**/*.{html,css,astro}\"",
 		"create-project": "node scripts/create-project.js"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.15",
-		"prettier": "^3.9.9"
+		"@biomejs/biome": "catalog:",
+		"prettier": "catalog:",
+		"prettier-plugin-astro": "catalog:"
 	},
-	"browserslist": [
-		"baseline widely available on 2026-01-01"
-	]
+	"prettier": "./toolchains/biome/astro/files/.prettierrc.json"
 }

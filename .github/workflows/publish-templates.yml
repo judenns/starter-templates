@@ -8,6 +8,8 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
 
     steps:
       - name: Checkout
@@ -24,11 +26,17 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Lint
-        run: pnpm run ci
+      - name: Lint + format check
+        run: pnpm run check
 
-      - name: Build templates
+      - name: Build templates (includes type check)
         run: pnpm build
+
+      - name: List template × toolchain combinations
+        id: matrix
+        run: |
+          MATRIX=$(jq -c '[(.toolchains | keys) as $c | .templates | keys[] as $t | $c[] | {template: $t, toolchain: .}]' templates.json)
+          echo "matrix=$MATRIX" >> "$GITHUB_OUTPUT"
 
   publish:
     needs: verify
@@ -37,7 +45,9 @@ jobs:
       contents: write
     strategy:
       matrix:
-        template: [vanilla-js, react-js]
+        include: ${{ fromJSON(needs.verify.outputs.matrix) }}
+    env:
+      NAME: ${{ matrix.template }}-${{ matrix.toolchain }}
 
     steps:
       - name: Checkout
@@ -56,23 +66,23 @@ jobs:
 
       - name: Build standalone template
         run: |
-          node scripts/create-project.js ${{ matrix.template }} standalone-${{ matrix.template }}
+          node scripts/create-project.js ${{ matrix.template }} ${{ matrix.toolchain }} "standalone-$NAME"
           # Remove git from generated project (will init fresh)
-          rm -rf standalone-${{ matrix.template }}/.git
+          rm -rf "standalone-$NAME/.git"
 
       - name: Verify standalone template builds
         # Build a copy so install artifacts (pnpm-lock.yaml, node_modules) never get published
         run: |
-          cp -r standalone-${{ matrix.template }} "$RUNNER_TEMP/verify"
+          cp -r "standalone-$NAME" "$RUNNER_TEMP/verify"
           cd "$RUNNER_TEMP/verify"
-          pnpm install --ignore-workspace
+          pnpm install
           pnpm build
-          pnpm exec biome ci .
+          pnpm run check
 
       - name: Deploy to branch
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          branch: ${{ matrix.template }}
-          folder: standalone-${{ matrix.template }}
+          branch: ${{ env.NAME }}
+          folder: standalone-${{ env.NAME }}
           clean: true
-          commit-message: "Update ${{ matrix.template }} template"
+          commit-message: "Update ${{ env.NAME }} template"

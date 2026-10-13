@@ -5,12 +5,12 @@ Scaffold a new frontend project from [judenns/starter-templates](https://github.
 ## Usage
 
 ```bash
-# Interactive
+# Interactive: pick a template and a toolchain
 pnpm create @judenns/starter
 
 # Direct
-pnpm create @judenns/starter react my-app
-pnpm create @judenns/starter vanilla my-app
+pnpm create @judenns/starter react my-app --toolchain biome
+pnpm create @judenns/starter astro my-site -t vite-plus
 ```
 
 Then:
@@ -23,27 +23,37 @@ pnpm dev
 
 ## Templates
 
-| Name      | Stack               |
-| --------- | ------------------- |
-| `vanilla` | Vite 8 + JavaScript |
-| `react`   | Vite 8 + React 19   |
+| Name      | Stack                        |
+| --------- | ---------------------------- |
+| `vanilla` | Vite + TypeScript            |
+| `react`   | Vite + React 19 + TypeScript |
+| `astro`   | Astro + TypeScript           |
+
+## Toolchains
+
+| Name        | Lint                      | Format                                         |
+| ----------- | ------------------------- | ---------------------------------------------- |
+| `biome`     | Biome                     | Biome (JS/TS/JSON) + Prettier (HTML/CSS/Astro) |
+| `vite-plus` | Oxlint, type-aware (`vp`) | Oxfmt (`vp`) — doesn't format `.astro` yet     |
+
+Every project has the same scripts whichever toolchain you pick: `lint`, `lint:fix`, `format`,
+`check`.
 
 Every template includes:
 
-- **Biome** for JS/JSON linting and formatting, **Prettier** for HTML/CSS
-- **PostCSS** with `postcss-preset-env` (nesting, custom media, autoprefixing) and `cssnano` for
-  production
+- **TypeScript** with an `@/` alias for `src/` (from `tsconfig.json` paths)
+- **Lightning CSS** (built into Vite): nesting, custom media, prefixes and minification — no
+  PostCSS setup
 - Shared reset + global CSS
-- `@` alias for `src/`
 - Browser targets: Baseline Widely Available (Chrome/Edge 111, Firefox 114, Safari 16.4)
 
-Templates are downloaded from the repo's template branches at run time, so you always get the
-latest version without updating this CLI.
+The template list and the templates themselves are fetched from the repo at run time, so you
+always get the latest version without updating this CLI.
 
 ## Requirements
 
 - Node.js ≥ 22.12
-- pnpm (recommended), npm, or yarn
+- pnpm
 
 ## License
 

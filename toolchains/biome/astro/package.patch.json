@@ -1,0 +1,9 @@
+{
+	"scripts": {
+		"format": "biome format --write . && prettier --write \"**/*.{html,css,astro}\"",
+		"check": "biome ci . && prettier --check \"**/*.{html,css,astro}\""
+	},
+	"devDependencies": {
+		"prettier-plugin-astro": "catalog:"
+	}
+}

@@ -1,30 +1,60 @@
 #!/usr/bin/env node
+import { parseArgs } from 'node:util';
 import { downloadTemplate } from 'giget';
 import prompts from 'prompts';
 
 const REPO = 'judenns/starter-templates';
-const TEMPLATES = {
-	vanilla: { branch: 'vanilla-js', description: 'Vite + Vanilla JavaScript' },
-	react: { branch: 'react-js', description: 'Vite + React 19' },
-};
+// Template list lives in the repo, so new templates don't need a CLI release
+const MANIFEST_URL = `https://raw.githubusercontent.com/${REPO}/main/templates.json`;
 
-let [template, projectName] = process.argv.slice(2);
+const { values, positionals } = parseArgs({
+	allowPositionals: true,
+	options: {
+		toolchain: { type: 'string', short: 't' },
+		help: { type: 'boolean', short: 'h' },
+	},
+});
+let [template, projectName] = positionals;
+let toolchain = values.toolchain;
+
+let manifest;
+try {
+	const response = await fetch(MANIFEST_URL);
+	if (!response.ok) throw new Error(`HTTP ${response.status}`);
+	manifest = await response.json();
+} catch (error) {
+	console.error(`Error: could not load the template list (${error.message})`);
+	process.exit(1);
+}
+
+const list = (entries) =>
+	Object.entries(entries)
+		.map(([name, { description }]) => `  ${name.padEnd(12)}${description}`)
+		.join('\n');
 
 // Show help
-if (template === '--help' || template === '-h') {
+if (values.help) {
 	console.log(`
-Usage: pnpm create @judenns/starter [template] [project-name]
+Usage: pnpm create @judenns/starter [template] [project-name] [--toolchain <name>]
 
 Templates:
-  vanilla    Vite + Vanilla JavaScript
-  react      Vite + React 19
+${list(manifest.templates)}
+
+Toolchains (--toolchain, -t):
+${list(manifest.toolchains)}
 
 Example:
-  pnpm create @judenns/starter react my-app
-  pnpm create @judenns/starter vanilla my-app
+  pnpm create @judenns/starter react my-app --toolchain biome
+  pnpm create @judenns/starter astro my-site -t vite-plus
 `);
 	process.exit(0);
 }
+
+const choices = (entries) =>
+	Object.entries(entries).map(([name, { description }]) => ({
+		title: `${name} - ${description}`,
+		value: name,
+	}));
 
 // Interactive prompts if missing arguments
 if (!template) {
@@ -32,13 +62,21 @@ if (!template) {
 		type: 'select',
 		name: 'template',
 		message: 'Select template:',
-		choices: Object.entries(TEMPLATES).map(([name, { description }]) => ({
-			title: `${name} - ${description}`,
-			value: name,
-		})),
+		choices: choices(manifest.templates),
 	});
 	template = response.template;
 	if (!template) process.exit(1);
+}
+
+if (!toolchain) {
+	const response = await prompts({
+		type: 'select',
+		name: 'toolchain',
+		message: 'Select lint/format toolchain:',
+		choices: choices(manifest.toolchains),
+	});
+	toolchain = response.toolchain;
+	if (!toolchain) process.exit(1);
 }
 
 if (!projectName) {
@@ -52,19 +90,23 @@ if (!projectName) {
 	if (!projectName) process.exit(1);
 }
 
-// Validate template
-const templateConfig = TEMPLATES[template];
-if (!templateConfig) {
-	console.error(`Error: Unknown template "${template}"`);
-	console.error(`Available templates: ${Object.keys(TEMPLATES).join(', ')}`);
-	process.exit(1);
+// Validate choices
+for (const [kind, name] of [
+	['templates', template],
+	['toolchains', toolchain],
+]) {
+	if (!manifest[kind][name]) {
+		console.error(`Error: Unknown ${kind.slice(0, -1)} "${name}"`);
+		console.error(`Available ${kind}: ${Object.keys(manifest[kind]).join(', ')}`);
+		process.exit(1);
+	}
 }
 
-// Download template
+// Download template (one branch per template + toolchain)
 try {
-	console.log(`Creating ${projectName} with ${template} template...`);
+	console.log(`Creating ${projectName} with ${template} + ${toolchain}...`);
 
-	await downloadTemplate(`github:${REPO}#${templateConfig.branch}`, {
+	await downloadTemplate(`github:${REPO}#${template}-${toolchain}`, {
 		dir: projectName,
 	});
 

@@ -4,6 +4,7 @@ packages:
 
 catalog:
   vite: "^8.0.0"
-  cssnano: "^9.0.0"
-  postcss: "^8.5.0"
-  postcss-preset-env: "^11.0.0"
+  typescript: "^6.0.0"
+  "@biomejs/biome": "^2.5.15"
+  prettier: "^3.9.9"
+  prettier-plugin-astro: "^1.0.0"
