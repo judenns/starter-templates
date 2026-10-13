@@ -1,0 +1,30 @@
+{
+	"name": "standalone-react-vite-plus",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vp dev",
+		"build": "tsc && vp build",
+		"preview": "vp preview",
+		"typecheck": "tsc",
+		"clean": "rm -rf dist",
+		"reinstall": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install",
+		"lint": "vp lint",
+		"lint:fix": "vp lint --fix",
+		"format": "vp fmt",
+		"check": "vp check"
+	},
+	"dependencies": {
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
+		"@vitejs/plugin-react": "^6.0.0",
+		"typescript": "^6.0.0",
+		"vite": "npm:@voidzero-dev/vite-plus-core@^1.0.0",
+		"vite-plus": "^1.0.0"
+	}
+}
