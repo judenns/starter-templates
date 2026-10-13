@@ -1,0 +1,12 @@
+{
+	"scripts": {
+		"lint": "biome lint .",
+		"lint:fix": "biome lint --write .",
+		"format": "biome format --write . && prettier --write \"**/*.{html,css}\"",
+		"check": "biome ci . && prettier --check \"**/*.{html,css}\""
+	},
+	"devDependencies": {
+		"@biomejs/biome": "catalog:",
+		"prettier": "catalog:"
+	}
+}

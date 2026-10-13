@@ -1,0 +1,11 @@
+{
+	"templates": {
+		"vanilla": { "description": "Vite + TypeScript", "cssDir": "src/css" },
+		"react": { "description": "Vite + React 19 + TypeScript", "cssDir": "src/css" },
+		"astro": { "description": "Astro + TypeScript", "cssDir": "src/styles" }
+	},
+	"toolchains": {
+		"biome": { "description": "Biome (lint, JS/TS format) + Prettier (HTML/CSS)" },
+		"vite-plus": { "description": "Vite+ (Oxlint + Oxfmt via vp)" }
+	}
+}

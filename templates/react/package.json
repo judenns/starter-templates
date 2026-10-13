@@ -1,16 +1,13 @@
 {
-	"name": "@starter/react-js",
+	"name": "@starter/react",
 	"private": true,
 	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite",
-		"build": "vite build",
+		"build": "tsc && vite build",
 		"preview": "vite preview",
-		"lint": "biome lint ./src",
-		"lint:fix": "biome lint --write ./src",
-		"format": "biome format --write ./src && prettier --write \"./src/**/*.{html,css}\"",
-		"ci": "biome ci ./src",
+		"typecheck": "tsc",
 		"clean": "rm -rf dist",
 		"reinstall": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install"
 	},
@@ -20,11 +17,10 @@
 	},
 	"devDependencies": {
 		"@starter/shared-css": "workspace:*",
-		"@starter/vite-config": "workspace:*",
+		"@types/react": "^19.0.0",
+		"@types/react-dom": "^19.0.0",
 		"@vitejs/plugin-react": "^6.0.0",
-		"cssnano": "catalog:",
-		"postcss": "catalog:",
-		"postcss-preset-env": "catalog:",
+		"typescript": "catalog:",
 		"vite": "catalog:"
 	}
 }

@@ -24,6 +24,9 @@ pnpm-debug.log*
 # Vite cache
 .vite
 
+# Astro generated types
+.astro
+
 # Testing
 coverage
 

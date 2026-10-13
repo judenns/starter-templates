@@ -6,7 +6,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A monorepo providing reusable frontend starter templates. Scaffold via `pnpm create @judenns/starter` or `degit`.
 
-**Current templates:** `vanilla-js`, `react-js` (Vite + React 19)
+**Templates:** `vanilla` (Vite + TS), `react` (Vite + React 19 + TS), `astro` (Astro + TS)
+**Toolchains:** `biome` (Biome + Prettier), `vite-plus` (Vite+: Oxlint + Oxfmt via `vp`)
+
+Every template × toolchain combination is published as its own branch: `<template>-<toolchain>`.
 
 ## Essential Commands
 
@@ -14,43 +17,56 @@ A monorepo providing reusable frontend starter templates. Scaffold via `pnpm cre
 # Development
 pnpm install              # Install all dependencies
 pnpm dev                  # Run dev servers for all templates in parallel
-pnpm build                # Build all templates
+pnpm build                # Type check + build all templates
+pnpm typecheck            # Type check all templates
 
-# Linting & Formatting
+# Linting & Formatting (the monorepo itself uses the biome toolchain)
 pnpm lint                 # Lint with Biome
 pnpm lint:fix             # Auto-fix lint issues
-pnpm format               # Format with Biome (JS/JSON) + Prettier (HTML/CSS)
-pnpm run ci               # CI mode check (Biome) — `pnpm ci` is a pnpm built-in
+pnpm format               # Format with Biome (JS/TS/JSON) + Prettier (HTML/CSS/Astro)
+pnpm run check            # CI check: Biome + Prettier
 
 # Create standalone project (for testing)
-pnpm create-project <template-name> <output-dir>
+pnpm create-project <template> <toolchain> <output-dir>
 ```
 
 ## Architecture
 
 ```
-packages/
-├── create-starter/      # @judenns/create-starter CLI
-├── shared-css/          # @starter/shared-css - reset.css, global.css
-└── vite-config/         # @starter/vite-config - createBaseConfig()
+templates.json           # Single list of templates + toolchains (CLI, CI matrix, create-project)
 
-templates/
-├── vanilla-js/          # → publishes to branch: vanilla-js
-└── react-js/            # → publishes to branch: react-js
+packages/
+├── create-starter/      # @judenns/create-starter CLI (fetches templates.json at run time)
+└── shared-css/          # @starter/shared-css - reset.css, global.css
+
+templates/               # Framework + TS only, no lint/format config
+├── vanilla/
+├── react/
+└── astro/
+
+toolchains/              # Lint/format layer applied on top of a template
+├── biome/               # files/ (biome.json, .prettierrc.json) + package.patch.json
+│   └── astro/           # Extra layer for biome × astro (prettier-plugin-astro)
+└── vite-plus/           # files/ (pnpm-workspace.yaml) + package.patch.json + vite.config.ts
 
 scripts/
-└── create-project.js    # Inlines configs, copies shared CSS, resolves versions
+└── create-project.js    # template + toolchain layers + shared CSS → standalone project
 ```
 
 **Key patterns:**
-- Templates use `workspace:*` for @starter packages
-- pnpm catalog in `pnpm-workspace.yaml` for shared dependency versions
-- Templates reference catalog versions via `catalog:` syntax
-- GitHub Action verifies (lint + build, monorepo and standalone) then publishes each template to its own branch on push to main
-- `create-project.js` generates the standalone `vite.config.js` by inlining `packages/vite-config/base.js` into the template's config — never hand-write it
-- Browser targets: `browserslist` in root `package.json` (`baseline widely available on <date>`) must match Vite's `baseline-widely-available` `build.target`; update the date on a Vite major
+
+- Templates use `workspace:*` for @starter packages and `catalog:` for shared versions (`pnpm-workspace.yaml`)
+- A toolchain layer is `toolchains/<toolchain>/` then `toolchains/<toolchain>/<template>/` (if it exists): `files/` is copied into the project, `package.patch.json` is deep-merged into `package.json`
+- Both toolchains expose the same scripts: `lint`, `lint:fix`, `format`, `check`
+- `vite-plus` is applied with code in `create-project.js`: `vite …` scripts become `vp …`, and `toolchains/vite-plus/vite.config.ts` (fmt/lint config) is merged into the template's `vite.config.ts` (or copied as-is when the template has none, e.g. Astro). Template `vite.config.ts` must have exactly one `from 'vite';` and one `export default defineConfig({`
+- `@/` alias comes from tsconfig `paths` (Vite: `resolve.tsconfigPaths: true`)
+- Adding to `templates.json` adds the template/toolchain to the CLI, the CI matrix and `create-project`
+- GitHub Action verifies the monorepo, then generates, installs, builds and checks every combination before publishing its branch
+- Root `biome.json` extends `toolchains/biome/files/biome.json`; it must force-ignore (`!!`) that file, or Biome reports a nested root config. Root Prettier config is `toolchains/biome/astro/files/.prettierrc.json` (via `package.json` `"prettier"`)
+- CSS goes through Vite's built-in Lightning CSS (`css.transformer: 'lightningcss'`, `drafts.customMedia`): no PostCSS, no browserslist — JS and CSS both use Vite's default `baseline-widely-available` target
+- Configure only what differs from a tool's defaults (e.g. `toolchains/vite-plus/vite.config.ts` sets just style + type-aware lint); Biome `$schema` points at `node_modules` so it never needs a version bump
 - Keep dependency ranges at major level (`^8.0.0`): pnpm 12's `minimumReleaseAge` (24h) rejects ranges whose floor is a just-published version
-- Template `biome.json` must stay nested: `{ "root": false, "extends": "//" }`
+- TypeScript stays on 6.x: `@astrojs/check` peer-depends on `^5 || ^6` (create-vite also pins 6.x)
 
 ## Code Style
 
@@ -58,13 +74,15 @@ scripts/
 - **Line width:** 100
 - **Quotes:** Single
 - **Semicolons:** Always
-- Biome handles JS/TS/JSX/TSX/JSON; Prettier handles HTML/CSS
+- Biome handles JS/TS/JSX/TSX/JSON; Prettier handles HTML/CSS/Astro
 
 ## Adding a New Template
 
-1. Create `templates/<name>/` with `package.json`, `vite.config.js`, `index.html`, `src/`
-2. Use `@starter/vite-config` and `@starter/shared-css` as workspace dependencies
-3. Add template name to the workflow matrix in `.github/workflows/publish-templates.yml`
+1. Create `templates/<name>/` with `package.json` (incl. `typecheck` script, `build` that type checks), `tsconfig.json`, `src/`
+2. Use `@starter/shared-css` as a workspace dependency, import it from the template's CSS entry
+3. Add it to `templates.json` with its `cssDir`
+4. If a toolchain needs extras for it, add `toolchains/<toolchain>/<name>/`
+5. Verify every combination: `pnpm create-project <name> <toolchain> <dir>`, then `pnpm install && pnpm build && pnpm run check` in it
 
 ## Publishing the CLI
 
