@@ -1,0 +1,23 @@
+{
+	"name": "standalone-vanilla-vite-plus",
+	"private": true,
+	"version": "1.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vp dev",
+		"build": "tsc && vp build",
+		"preview": "vp preview",
+		"typecheck": "tsc",
+		"clean": "rm -rf dist",
+		"reinstall": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install",
+		"lint": "vp lint",
+		"lint:fix": "vp lint --fix",
+		"format": "vp fmt",
+		"check": "vp check"
+	},
+	"devDependencies": {
+		"typescript": "^6.0.0",
+		"vite": "npm:@voidzero-dev/vite-plus-core@^1.0.0",
+		"vite-plus": "^1.0.0"
+	}
+}
