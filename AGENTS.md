@@ -6,15 +6,17 @@ Notes for agents working **on this repo**. To create a project, follow `SKILL.md
 
 An [Agent Skill](https://agentskills.io/specification) named `starter`. The repo root is the skill folder. It gets linked into an agent's skills directory as `starter` (`~/.claude/skills/starter` or `~/.agents/skills/starter`).
 
-The skill runs the official create command through Vite+ (`pnpm create vite-plus …`), then applies `overlay/` on top. The scaffold supplies every project file, so this repo ships configuration only.
+The skill runs the official create command through Vite+ (`pnpm create vite-plus …`), then applies `overlay/` on top. The exception is `vanilla js`, which uses plain Vite (`pnpm create vite`) with `oxlint` and `oxfmt` added directly. The scaffold supplies every project file, so this repo ships configuration only.
 
 ```
 SKILL.md              # The workflow the agent follows. Frontmatter `name` must stay `starter`
 overlay/
-├── vite.config.ts    # Blocks merged into the scaffold's config (fmt, resolve, css)
+├── vite.config.ts    # Blocks merged into the scaffold's Vite+ config (fmt, resolve, css)
+├── plain-vite/       # vanilla js only: vite.config.js and oxfmtrc.json, copied as-is
 ├── css/              # reset.css, global.css, index.css (imports both)
 └── gitignore         # Lines appended to the project's .gitignore (no dot, so it doesn't apply here)
-README.md             # For people installing and using the skill
+commands/starter.md   # /starter command for OpenCode
+README.md             # Minimal: install and use
 ```
 
 ## Rules
@@ -28,8 +30,8 @@ README.md             # For people installing and using the skill
 
 ## Adding a Template
 
-Add a row to the Scaffold table in `SKILL.md`, with its `pnpm create vite-plus <template> … -- <options>` command and CSS dir. Then add any step that's specific to it (where Vite config goes, where to import the CSS) to section 3.
+Add its `pnpm create vite-plus <template> … -- <options>` command to section 2 of `SKILL.md` and a row to the variant table in section 3. Add any step specific to it to section 3.
 
 ## Verifying a Change
 
-Run the skill for every template in a temporary directory: `vanilla` + `js` and `ts`, `react` + `js` and `ts`, and `astro`. Each one must pass `pnpm install && pnpm format && pnpm build && pnpm run check`, with the reset CSS in the build output and an `@/` import resolving (where a tsconfig exists). Upstream scaffolds change over time, so re-run this after changing the skill and whenever a create command's output changes.
+Run the skill for every variant in a temporary directory: `vanilla ts`, `vanilla js`, `react ts`, `react js` and `astro`. Each one must pass `pnpm install && pnpm format && pnpm build && pnpm run check`, with the reset CSS in the build output and an `@/` import resolving (TS variants and Astro). Upstream scaffolds change over time, so re-run this after changing the skill and whenever a create command's output changes.
