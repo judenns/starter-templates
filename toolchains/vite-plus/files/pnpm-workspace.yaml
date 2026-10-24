@@ -1,7 +1,0 @@
-# Vite+ ships its own Vite build: make every package (plugins, frameworks) use it
-overrides:
-  vite: 'npm:@voidzero-dev/vite-plus-core@^1.0.0'
-
-peerDependencyRules:
-  allowAny:
-    - vite
