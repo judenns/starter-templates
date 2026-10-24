@@ -1,6 +1,6 @@
 # Starter
 
-An [Agent Skill](https://agentskills.io) that sets up a new TypeScript project for Vanilla, React or Astro. It runs the framework's official create command, then adds my defaults on top:
+An [Agent Skill](https://agentskills.io) that sets up a new JavaScript or TypeScript project for Vanilla, React or Astro. It runs the framework's official create command, then adds my defaults on top:
 
 - **Vite+** for linting and formatting (Oxlint + Oxfmt via `vp`): tabs, single quotes, type-aware lint
 - **CSS:** a reset and global styles, with Lightning CSS for nesting, `@custom-media`, prefixes and minifying
@@ -24,7 +24,7 @@ OpenCode reads both folders, so link only one of them. Otherwise it finds two sk
 
 **Agents without skill support:** point the agent at the file, for example "Follow `~/Work/starter-templates/SKILL.md` to create a React project called my-app."
 
-Requires Node.js ≥ 22.12 and [pnpm](https://pnpm.io/installation).
+Requires Node.js ≥ 22.23.4 and [pnpm](https://pnpm.io/installation).
 
 ## Use
 
@@ -32,15 +32,21 @@ Ask in plain words, or call the skill directly where your agent supports it:
 
 ```text
 /starter react my-app
+/starter react js my-app
+/starter react ts my-app
+/starter vanilla ts playground
+/starter astro ts blog
 Create an Astro site called blog
 Start a vanilla TypeScript project named playground, with Tailwind
 ```
 
-| Template  | Created with                                    |
-| --------- | ----------------------------------------------- |
-| `vanilla` | `create-vite` (`vanilla-ts`) through Vite+      |
-| `react`   | `create-vite` (`react-ts`) through Vite+        |
-| `astro`   | `create-astro` (`minimal`) through Vite+        |
+| Template      | Created with                                  |
+| ------------- | --------------------------------------------- |
+| `vanilla`     | `create-vite` (`vanilla` / `vanilla-ts`)      |
+| `react`       | `create-vite` (`react` / `react-ts`)          |
+| `astro`       | `create-astro` (`minimal`)                    |
+
+`js`/`ts` is optional and defaults to `ts`. Astro has no `js`/`ts` create option — the `minimal` template ships a `tsconfig.json` and accepts TypeScript, so the same command serves both.
 
 The agent checks that the project installs, builds and passes lint and format, then makes the first commit.
 

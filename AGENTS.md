@@ -32,4 +32,4 @@ Add a row to the Scaffold table in `SKILL.md`, with its `pnpm create vite-plus <
 
 ## Verifying a Change
 
-Run the skill for every template in a temporary directory: `vanilla`, `react` and `astro`. Each one must pass `pnpm install && pnpm format && pnpm build && pnpm run check`, with the reset CSS in the build output and an `@/` import resolving. Upstream scaffolds change over time, so re-run this after changing the skill and whenever a create command's output changes.
+Run the skill for every template in a temporary directory: `vanilla` + `js` and `ts`, `react` + `js` and `ts`, and `astro`. Each one must pass `pnpm install && pnpm format && pnpm build && pnpm run check`, with the reset CSS in the build output and an `@/` import resolving (where a tsconfig exists). Upstream scaffolds change over time, so re-run this after changing the skill and whenever a create command's output changes.
