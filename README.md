@@ -24,7 +24,7 @@ OpenCode reads both folders, so link only one of them. Otherwise it finds two sk
 
 **Agents without skill support:** point the agent at the file, for example "Follow `~/Work/starter-templates/SKILL.md` to create a React project called my-app."
 
-Requires Node.js ≥ 22.23.4 and [pnpm](https://pnpm.io/installation).
+Requires Node.js 22.23.4+ or 24.11+, and [pnpm](https://pnpm.io/installation).
 
 ## Use
 

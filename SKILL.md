@@ -2,7 +2,7 @@
 name: starter
 description: Scaffold a new frontend project (vanilla, React or Astro, in JavaScript or TypeScript) with the official create command, then apply a Vite+ lint/format config, CSS reset, `@/` alias and Lightning CSS on top. Use when asked to start, create, scaffold or set up a new web project, app or site.
 license: MIT
-compatibility: Needs a shell, Node.js 22.23.4+, pnpm and network access.
+compatibility: Needs a shell, Node.js 22.23.4+ or 24.11+, pnpm and network access.
 argument-hint: '[vanilla|react|astro] [js|ts] [project-name]'
 ---
 
@@ -24,7 +24,7 @@ Take them from the request. If the template or name is missing, ask the user; do
 
 Astro has no `js`/`ts` create option — its `minimal` template is plain JavaScript but ships a `tsconfig.json` and accepts TypeScript in `.astro` and `.ts` files, so the same command serves both.
 
-Check `node -v` (22.23.4 or newer) and `pnpm -v` (installed).
+Check `node -v` (22.23.4+ on Node 22, or 24.11+) and `pnpm -v` (installed).
 
 ## 2. Scaffold
 
@@ -49,8 +49,8 @@ Edit the scaffold's files in place. Never replace a file wholesale, and leave it
 The scaffold's config is usually `vite.config.ts`, but `react js` uses `vite.config.js`. Merge into whichever exists.
 
 - `fmt` and `css`: always.
-- `resolve`: only when the project has a `tsconfig` (every template except `vanilla js` and `react js`). Skip it for Astro too — Astro reads tsconfig paths itself.
-- Astro: `fmt` goes into `vite.config.ts`; `css` goes under `vite` in `astro.config.mjs`; skip `resolve`.
+- `resolve`: only for `vanilla ts` and `react ts`. The JS templates have no tsconfig, and Astro reads tsconfig paths itself.
+- Astro: `fmt` goes into `vite.config.ts`; `css` goes under `vite` in `astro.config.mjs`.
 
   ```js
   export default defineConfig({
