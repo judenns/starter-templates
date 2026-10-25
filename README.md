@@ -22,7 +22,7 @@ Link only one for OpenCode, since it reads both folders. Run `git pull` in the r
 Create an Astro site called blog
 ```
 
-Language defaults to `ts`. The agent verifies the project builds and passes lint and format, then makes the first commit.
+Language defaults to `ts`. The agent verifies the project builds and passes lint and format. It leaves `git init` to you.
 
 ## License
 

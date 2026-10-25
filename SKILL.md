@@ -4,6 +4,7 @@ description: Scaffold a new frontend project (vanilla, React or Astro, in JavaSc
 license: MIT
 compatibility: Needs a shell, Node.js 22.23.4+ or 24.11+, pnpm and network access.
 argument-hint: '[vanilla|react|astro] [js|ts] [project-name]'
+allowed-tools: Bash(pnpm:*) Bash(mkdir:*) Bash(cp:*)
 ---
 
 # Starter
@@ -114,17 +115,15 @@ pnpm add -D @astrojs/check typescript@^6
 
 Then set `"build": "astro check && astro build"`. Keep TypeScript on 6: `astro check` refuses TypeScript 7.
 
-## 4. Verify and commit
+## 4. Verify
 
 ```sh
 pnpm install && pnpm format && pnpm build && pnpm run check
 ```
 
-If a step fails, fix the cause and rerun the whole line. Never report success while a step fails. Then:
+If a step fails, fix the cause and rerun the whole line. Never report success while a step fails.
 
-```sh
-git init && git add -A && git commit -m "Initial commit"
-```
+Don't run `git init` or commit: the user sets up the repository.
 
 ## 5. Report
 
@@ -135,7 +134,7 @@ Confirm before reporting:
 - [ ] `@/*` is in the tsconfig `paths` (TS variants and Astro)
 - [ ] the three stylesheets are in the CSS dir and `index.css` is imported first
 - [ ] `lint`, `lint:fix`, `format` and `check` scripts exist
-- [ ] the verify line passed and the commit exists
+- [ ] the verify line passed
 
 Tell the user what was created and the next steps: `cd <name>` and `pnpm dev`.
 

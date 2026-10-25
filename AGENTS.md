@@ -21,7 +21,7 @@ README.md             # Minimal: install and use
 
 ## Rules
 
-- Keep `SKILL.md` agent-neutral: plain shell commands and file edits, no tool names specific to one agent. Frontmatter uses the Agent Skills fields (`name`, `description`, `license`, `compatibility`). Extra fields such as `argument-hint` are fine, since other agents ignore them.
+- Keep `SKILL.md` agent-neutral: plain shell commands and file edits, no tool names specific to one agent. Frontmatter uses the Agent Skills fields (`name`, `description`, `license`, `compatibility`, `allowed-tools`). `allowed-tools` pre-approves the `pnpm`, `mkdir` and `cp` commands the skill runs, so agents that honour it (Claude Code) don't prompt for each one while the skill is active. Extra fields such as `argument-hint` are fine, since other agents ignore them.
 - Keep `SKILL.md` under 500 lines. Put long material in a file it references by relative path.
 - Configure only what differs from a tool's defaults. If the scaffold already sets something (`vp` scripts, type-aware lint, the Vite+ catalog and overrides), don't repeat it in the overlay.
 - Don't hand-pin versions. The one exception is `typescript@^6` for Astro: `astro check` refuses TypeScript 7, and create-vite also pins 6. Remove the pin once `astro check` supports 7, or once Astro replaces it.
