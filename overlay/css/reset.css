@@ -67,9 +67,7 @@ select {
 
 button {
 	box-shadow: none;
-	border: none;
 	cursor: pointer;
-	border-radius: 0;
 	white-space: nowrap;
 }
 
