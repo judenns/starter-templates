@@ -1,2 +1,4 @@
-@import './reset.css';
-@import './global.css';
+/* Both files go in the `base` layer, so unlayered CSS and Tailwind utilities override them.
+   Adding Tailwind: put `@import 'tailwindcss';` first and remove the reset.css import (Preflight replaces it) */
+@import './reset.css' layer(base);
+@import './global.css' layer(base);

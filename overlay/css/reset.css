@@ -4,57 +4,68 @@
 	box-sizing: border-box;
 }
 
+*:not(dialog) {
+	margin: 0;
+}
+
+/* Stop mobile browsers inflating text; 100% (not none) keeps the user's font-size setting */
 html {
-	-moz-text-size-adjust: none;
-	-webkit-text-size-adjust: none;
-	text-size-adjust: none;
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
 }
 
 body {
-	margin: 0;
+	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
-	text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
 h3,
 h4,
-p,
-figure,
-blockquote,
-dl,
-dd {
-	margin-block-end: 0;
-}
-
-ul,
-ol,
-ul[role='list'],
-ol[role='list'] {
-	list-style: none;
-}
-
-h1,
-h2,
-h3,
-h4,
+h5,
+h6,
 button,
 input,
 label {
 	line-height: 1.2;
 }
 
-/* A elements that don't have a class get default styles */
-a:not([class]) {
-	text-decoration-skip-ink: auto;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	overflow-wrap: break-word;
+	text-wrap: balance;
+}
+
+p {
+	overflow-wrap: break-word;
+	text-wrap: pretty;
+}
+
+/* Only lists marked role="list" lose their bullets: Safari drops list semantics without it */
+ul[role='list'],
+ol[role='list'] {
+	list-style: none;
+	padding: 0;
 }
 
 img,
-picture {
+picture,
+video,
+canvas,
+svg {
 	display: block;
 	max-inline-size: 100%;
+}
+
+img,
+video {
+	block-size: auto;
 }
 
 input,
@@ -66,7 +77,6 @@ select {
 }
 
 button {
-	box-shadow: none;
 	cursor: pointer;
 	white-space: nowrap;
 }
@@ -74,10 +84,14 @@ button {
 fieldset {
 	border: none;
 	padding: 0;
-	margin: 0;
 }
 
 /* Make sure textareas without a rows attribute are not tiny */
 textarea:not([rows]) {
 	min-height: 10em;
+}
+
+/* Leave room above anything scrolled to by an anchor link */
+:target {
+	scroll-margin-block: 5ex;
 }
