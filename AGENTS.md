@@ -1,12 +1,12 @@
 Notes for agents working ON this repo. To create a project, follow SKILL.md.
 
 Repo = Agent Skill (agentskills.io/specification) named `starter`; root is the skill folder, symlinked as `~/.claude/skills/starter` or `~/.agents/skills/starter`.
-Skill runs `pnpm create vite-plus ...` then applies `overlay/`. Exception: vanilla js uses plain Vite (`pnpm create vite`) + oxlint/oxfmt added directly. Scaffold supplies all project files; repo ships config only.
+Skill runs `pnpm create vite-plus ...` then applies `overlay/`. Exceptions: vanilla js (`pnpm create vite`) and astro (`pnpm create astro`; Vite+ breaks it) skip Vite+, oxlint/oxfmt added directly. Scaffold supplies all project files; repo ships config only.
 
 Layout:
 - SKILL.md: workflow the agent follows. Frontmatter `name` must stay `starter`.
 - overlay/vite.config.ts: blocks merged into scaffold's Vite+ config (fmt, resolve, css).
-- overlay/plain-vite/: vanilla js only; vite.config.js + oxfmtrc.json copied as-is.
+- overlay/plain-vite/: copied as-is. vite.config.js: vanilla js. oxfmtrc.json: vanilla js + astro.
 - overlay/css/: reset.css, global.css, index.css (imports both into @layer base).
 - overlay/gitignore: lines appended to project .gitignore (no dot so it doesn't apply here).
 - commands/starter.md: /starter command for OpenCode.

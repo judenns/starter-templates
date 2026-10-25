@@ -17,7 +17,7 @@ Parse from request (e.g. `react my-app`, `vanilla js playground`). Missing templ
 Check `node -v` (22.23.4+ or 24.11+) and `pnpm -v`.
 
 ## 2. Scaffold
-Run the variant's command, then `cd <name>`. All variants use Vite+ (Oxlint + Oxfmt via `vp`, deps auto-installed) except vanilla js: plain Vite, run `pnpm install` after cd.
+Run the variant's command, then `cd <name>`. Vite+ variants (vanilla ts, react) get Oxlint + Oxfmt via `vp`, deps auto-installed. Plain variants (vanilla js, astro) skip Vite+ (astro: Vite+ breaks it): run `pnpm install` after cd.
 ```sh
 # vanilla ts
 pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template vanilla-ts
@@ -26,7 +26,7 @@ pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --
 # react js
 pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template react
 # astro
-pnpm create vite-plus create-astro --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template minimal --no-install --no-git --yes --no-ai --skip-houston
+pnpm create astro <name> --template minimal --no-install --no-git --yes --no-ai --skip-houston
 # vanilla js
 pnpm create vite <name> --template vanilla --no-interactive --no-immediate
 ```
@@ -41,11 +41,11 @@ vanilla ts | vite.config.ts | tsconfig.json | src/css | src/main.ts, first line
 vanilla js | copy (3a) | - | src/css | src/main.js, first line
 react ts | vite.config.ts | tsconfig.app.json | src/css | src/main.tsx, above `import './index.css';`
 react js | vite.config.js | - | src/css | src/main.jsx, above `import './index.css';`
-astro | vite.config.ts + astro.config.mjs | tsconfig.json | src/styles | src/pages/index.astro, frontmatter
+astro | astro.config.mjs | tsconfig.json | src/styles | src/pages/index.astro, frontmatter
 
 3a. Vite config
 - Vite+ variants: merge keys from `overlay/vite.config.ts` into scaffold config, replacing its empty `fmt: {}`, keeping everything else (lint, plugins, imports). Always merge `fmt` and `css`; `resolve` only for vanilla ts and react ts.
-- astro: `fmt` into vite.config.ts. `css` under `vite` in astro.config.mjs. Skip `resolve` (Astro reads tsconfig paths):
+- astro: `css` under `vite` in astro.config.mjs. Skip `resolve` (Astro reads tsconfig paths):
   ```js
   export default defineConfig({
   	vite: {
@@ -56,9 +56,9 @@ astro | vite.config.ts + astro.config.mjs | tsconfig.json | src/styles | src/pag
   	},
   });
   ```
-- vanilla js (no config yet):
+- vanilla js (no config yet): `cp "$SKILL_DIR"/overlay/plain-vite/vite.config.js vite.config.js`
+- Plain variants (vanilla js, astro):
   ```sh
-  cp "$SKILL_DIR"/overlay/plain-vite/vite.config.js vite.config.js
   cp "$SKILL_DIR"/overlay/plain-vite/oxfmtrc.json .oxfmtrc.json
   pnpm add -D oxlint oxfmt
   ```
@@ -71,7 +71,7 @@ astro | vite.config.ts + astro.config.mjs | tsconfig.json | src/styles | src/pag
 3d. .gitignore: append each line of `overlay/gitignore` not already present.
 
 3e. package.json scripts (add, keep scaffold's own):
-script | Vite+ | vanilla js
+script | Vite+ | plain (vanilla js, astro)
 --- | --- | ---
 lint | vp lint | oxlint
 lint:fix | vp lint --fix | oxlint --fix
