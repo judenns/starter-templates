@@ -30,7 +30,7 @@ pnpm create vite-plus create-astro --no-interactive --no-agent --no-editor --no-
 # vanilla js
 pnpm create vite <name> --template vanilla --no-interactive --no-immediate
 ```
-Other frameworks from `pnpm create vite-plus --list`: scaffold the same way, apply overlay where it fits.
+Other frameworks (vue, svelte, solid, sveltekit, next, nuxt, react-router, tanstack start, ...): see "Other frameworks" below.
 
 ## 3. Overlay
 Edit scaffold files in place. Never replace a file wholesale; leave demo content alone.
@@ -93,6 +93,18 @@ Confirm first:
 - lint, lint:fix, format, check scripts exist
 - verify line passed
 Tell user what was created and next steps: `cd <name>`, `pnpm dev`.
+
+## Other frameworks
+Before scaffolding, read the framework's official docs (Context7 if available, else its docs site) for: create command + non-interactive flags, where CSS/Vite config goes, built-in path alias, type check script.
+- Scaffold via `pnpm create vite-plus <shorthand|create-pkg> --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> <template options>` (shorthands: `pnpm create vite-plus --list`). Vite templates (vue-ts, svelte-ts, solid-ts, ...) use the `vite` shorthand and follow the react ts row.
+- Priority: official docs/conventions > compatibility > this overlay. Never force overlay setup. Apply an item only where docs confirm it fits; unsure: skip it, tell the user.
+- Keep framework conventions: its own alias (`~`, `#lib`, existing `@`) instead of adding `@/`; its own config file for CSS/Vite options; global CSS where docs say (root layout, `css: []`, linked stylesheet, ...).
+- Template ships Tailwind: follow Extras (drop reset.css, keep global.css), import index.css after the Tailwind stylesheet.
+- Existing check/typecheck script: combine instead of replacing (e.g. `vp check && svelte-check ...`). Generated types needed first: run the generator before `vp check` (e.g. `react-router typegen && vp check && tsc`).
+- Generated files (e.g. TanStack `src/routeTree.gen.ts`): add to `fmt.ignorePatterns`.
+- Non-Vite frameworks (Next): Vite+ config only drives fmt/lint; enable Lightning CSS only via a documented option, else skip (Next+Turbopack already uses it).
+- `ERR_PNPM_IGNORED_BUILDS` on install (e.g. Nuxt, esbuild): add the named packages under `allowBuilds:` in pnpm-workspace.yaml (`<pkg>: true`), rerun.
+- Same verify line and report checklist; mark items skipped on purpose and why.
 
 ## Extras
 Only if asked (e.g. "react with Tailwind"): finish + verify base first, add extra per its official docs, rerun verify.
