@@ -5,15 +5,15 @@ Skill runs `pnpm create vite-plus ...` then applies `overlay/`. Exceptions: vani
 
 Layout:
 - SKILL.md: workflow the agent follows. Frontmatter `name` must stay `starter`.
-- overlay/vite.config.ts: blocks merged into scaffold's Vite+ config (fmt, resolve, css).
-- overlay/plain-vite/: copied as-is. vite.config.js: vanilla js. oxfmtrc.json: vanilla js + astro.
+- overlay/vite-plus/vite.config.ts: blocks merged into scaffold's Vite+ config (fmt, resolve, css).
+- overlay/vanilla-js/, overlay/astro/: copied as-is (oxfmtrc.json -> .oxfmtrc.json; astro.config.mjs replaces the scaffold's empty one).
 - overlay/css/: reset.css, global.css, index.css (imports both into @layer base).
 - overlay/gitignore: lines appended to project .gitignore (no dot so it doesn't apply here).
 - commands/starter.md: /starter command for OpenCode.
 - README.md: minimal, human-facing.
 
 Rules:
-- SKILL.md agent-neutral: plain shell + file edits, no agent-specific tool names. Frontmatter: Agent Skills fields (name, description, license, compatibility, allowed-tools). allowed-tools pre-approves the pnpm/mkdir/cp the skill runs. Extra fields (argument-hint) fine.
+- SKILL.md agent-neutral: plain shell + file edits, no agent-specific tool names. Frontmatter: Agent Skills fields (name, description, license, compatibility, allowed-tools). allowed-tools pre-approves everything the skill runs (pnpm, node -v, file read/edit/write). Overlay files are copied by read + write, never shell cp: the skill folder is outside the project, so shell access to it prompts. User ask rules (e.g. `Bash(pnpm add:*)`) override allowed-tools. Extra fields (argument-hint) fine.
 - SKILL.md < 500 lines; long material goes in a file referenced by relative path.
 - SKILL.md/AGENTS.md are for LLMs: terse, no decorative formatting.
 - Configure only what differs from tool defaults. Don't repeat what the scaffold sets (vp scripts, type-aware lint, Vite+ catalog/overrides).

@@ -4,20 +4,16 @@ description: Scaffold a new frontend project (vanilla, React or Astro, in JavaSc
 license: MIT
 compatibility: Needs a shell, Node.js 22.23.4+ or 24.11+, pnpm and network access.
 argument-hint: '[vanilla|react|astro] [js|ts] [project-name]'
-allowed-tools: Bash(pnpm:*) Bash(mkdir:*) Bash(cp:*)
+allowed-tools: Bash(pnpm *) Bash(node -v) Read Edit Write
 ---
 
-Scaffold with the official create command, then apply `overlay/` on top. Scaffold supplies all project files; overlay adds config only. SKILL_DIR = absolute path of this file's folder; `overlay/...` paths are relative to it.
+Scaffold with the official create command, then copy CSS + config from `overlay/` (relative to this file's folder). Scaffold supplies all project files.
+Permissions: one shell command per call (no `&&`, pipes, heredocs, variables). The skill folder is outside the project: never ls/cp/cat it; copy an overlay file by reading it and writing it to the target. Change project files with file edits.
 
 ## 1. Inputs
-- template: vanilla | react | astro. Required.
-- lang: ts | js. Default ts. Astro ignores it.
-- name: project dir, relative to cwd. Required.
-Parse from request (e.g. `react my-app`, `vanilla js playground`). Missing template or name: ask, don't guess. Dir exists: stop.
-Check `node -v` (22.23.4+ or 24.11+) and `pnpm -v`.
+template (vanilla | react | astro) and name (project dir) required: ask if missing. lang ts | js, default ts; astro ignores it. Dir exists: stop. Needs `node -v` 22.23.4+ or 24.11+ and pnpm.
 
 ## 2. Scaffold
-Run the variant's command, then `cd <name>`. Vite+ variants (vanilla ts, react) get Oxlint + Oxfmt via `vp`, deps auto-installed. Plain variants (vanilla js, astro) skip Vite+ (astro: Vite+ breaks it): run `pnpm install` after cd.
 ```sh
 # vanilla ts
 pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template vanilla-ts
@@ -25,74 +21,48 @@ pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --
 pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template react-ts
 # react js
 pnpm create vite-plus vite --no-interactive --no-agent --no-editor --no-hooks --no-git -- <name> --template react
-# astro
-pnpm create astro <name> --template minimal --no-install --no-git --yes --no-ai --skip-houston
-# vanilla js
+# vanilla js (plain Vite)
 pnpm create vite <name> --template vanilla --no-interactive --no-immediate
+# astro (plain: Vite+ breaks it)
+pnpm create astro <name> --template minimal --no-install --no-git --yes --no-ai --skip-houston
 ```
-Other frameworks (vue, svelte, solid, sveltekit, next, nuxt, react-router, tanstack start, ...): see "Other frameworks" below.
+Then `cd <name>`; plain variants (vanilla js, astro): `pnpm install`.
+Other frameworks: see "Other frameworks" below.
 
-## 3. Overlay
-Edit scaffold files in place. Never replace a file wholesale; leave demo content alone.
+## 3. Apply
+All variants:
+- CSS: copy `overlay/css/reset.css`, `global.css`, `index.css` into the css dir, import index.css before any other stylesheet (see variant).
+- .gitignore: append each line of `overlay/gitignore` not already present.
+- package.json: add scripts, keep the scaffold's own:
+  script | Vite+ | plain
+  --- | --- | ---
+  lint | vp lint | oxlint
+  lint:fix | vp lint --fix | oxlint --fix
+  format | vp fmt | oxfmt
+  check | vp check | oxfmt --check && oxlint
 
-variant | vite config | `@/` paths in | css dir | import index.css in
---- | --- | --- | --- | ---
-vanilla ts | vite.config.ts | tsconfig.json | src/css | src/main.ts, first line
-vanilla js | copy (3a) | - | src/css | src/main.js, first line
-react ts | vite.config.ts | tsconfig.app.json | src/css | src/main.tsx, above `import './index.css';`
-react js | vite.config.js | - | src/css | src/main.jsx, above `import './index.css';`
-astro | astro.config.mjs | tsconfig.json | src/styles | src/pages/index.astro, frontmatter
+vanilla ts / react ts / react js (Vite+):
+- Merge `overlay/vite-plus/vite.config.ts` into the scaffold's vite.config: `fmt` replaces its empty `fmt: {}`, add `css`, keep everything else. `resolve` only for TS.
+- TS: add `"paths": { "@/*": ["./src/*"] }` to compilerOptions in tsconfig.json (vanilla) or tsconfig.app.json (react).
+- css dir `src/css`. Import `import './css/index.css';` as first line of src/main.ts (vanilla) or above `import './index.css';` in src/main.tsx|jsx (react).
 
-3a. Vite config
-- Vite+ variants: merge keys from `overlay/vite.config.ts` into scaffold config, replacing its empty `fmt: {}`, keeping everything else (lint, plugins, imports). Always merge `fmt` and `css`; `resolve` only for vanilla ts and react ts.
-- astro: `css` under `vite` in astro.config.mjs. Skip `resolve` (Astro reads tsconfig paths):
-  ```js
-  export default defineConfig({
-  	vite: {
-  		css: {
-  			transformer: 'lightningcss',
-  			lightningcss: { drafts: { customMedia: true } },
-  		},
-  	},
-  });
-  ```
-- vanilla js (no config yet): `cp "$SKILL_DIR"/overlay/plain-vite/vite.config.js vite.config.js`
-- Plain variants (vanilla js, astro):
-  ```sh
-  cp "$SKILL_DIR"/overlay/plain-vite/oxfmtrc.json .oxfmtrc.json
-  pnpm add -D oxlint oxfmt
-  ```
+vanilla js:
+- Copy `overlay/vanilla-js/vite.config.js` to `vite.config.js`, `overlay/vanilla-js/oxfmtrc.json` to `.oxfmtrc.json`.
+- `pnpm add -D oxlint oxfmt`
+- css dir `src/css`. Import `import './css/index.css';` as first line of src/main.js.
 
-3b. `@/` alias (TS variants + astro): add to `compilerOptions` in the table's file (create `compilerOptions` if missing, e.g. astro):
-`"paths": { "@/*": ["./src/*"] }`
-
-3c. CSS: `mkdir -p <css-dir> && cp "$SKILL_DIR"/overlay/css/*.css <css-dir>/`, then import index.css before any other stylesheet where the table says. Import: `import './css/index.css';`; astro: `import '@/styles/index.css';`.
-
-3d. .gitignore: append each line of `overlay/gitignore` not already present.
-
-3e. package.json scripts (add, keep scaffold's own):
-script | Vite+ | plain (vanilla js, astro)
---- | --- | ---
-lint | vp lint | oxlint
-lint:fix | vp lint --fix | oxlint --fix
-format | vp fmt | oxfmt
-check | vp check | oxfmt --check && oxlint
-
-3f. astro only, type check on build (TS vanilla/react builds already do): `pnpm add -D @astrojs/check typescript@^6`, set `"build": "astro check && astro build"`. Keep TS 6: `astro check` refuses TS 7.
+astro:
+- Copy `overlay/astro/astro.config.mjs` over `astro.config.mjs` (scaffold's is empty), `overlay/astro/oxfmtrc.json` to `.oxfmtrc.json`.
+- `pnpm add -D oxlint oxfmt @astrojs/compiler-rs @astrojs/check typescript@^6` (compiler-rs: oxfmt formats .astro with it. TS 6: `astro check` refuses 7).
+- Set script `"build": "astro check && astro build"`.
+- tsconfig.json: add `"compilerOptions": { "paths": { "@/*": ["./src/*"] } }`.
+- css dir `src/styles`. Import `import '@/styles/index.css';` in src/pages/index.astro frontmatter.
 
 ## 4. Verify
-`pnpm install && pnpm format && pnpm build && pnpm run check`
-On failure fix cause, rerun whole line. Never report success while a step fails. Don't `git init` or commit; user does that.
+`pnpm install && pnpm format && pnpm build && pnpm run check` (run as separate commands). On failure fix cause, rerun all. Never report success while a step fails. Don't `git init` or commit.
 
 ## 5. Report
-Confirm first:
-- format config has `useTabs: true`, `singleQuote: true`, `sortPackageJson: false` (`fmt` in vite config, or .oxfmtrc.json)
-- Lightning CSS set (astro: astro.config.mjs)
-- `@/*` in tsconfig paths (TS variants + astro)
-- 3 stylesheets in css dir, index.css imported first
-- lint, lint:fix, format, check scripts exist
-- verify line passed
-Tell user what was created and next steps: `cd <name>`, `pnpm dev`.
+Confirm: format config (tabs, single quotes, sortPackageJson false), Lightning CSS, `@/*` paths (TS + astro), 3 stylesheets with index.css imported first, the 4 scripts, verify passed. Next steps: `cd <name>`, `pnpm dev`.
 
 ## Other frameworks
 Before scaffolding, read the framework's official docs (Context7 if available, else its docs site) for: create command + non-interactive flags, where CSS/Vite config goes, built-in path alias, type check script.
