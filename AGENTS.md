@@ -13,7 +13,7 @@ SKILL.md              # The workflow the agent follows. Frontmatter `name` must 
 overlay/
 ├── vite.config.ts    # Blocks merged into the scaffold's Vite+ config (fmt, resolve, css)
 ├── plain-vite/       # vanilla js only: vite.config.js and oxfmtrc.json, copied as-is
-├── css/              # reset.css, global.css, index.css (imports both)
+├── css/              # reset.css, global.css, index.css (imports both into @layer base)
 └── gitignore         # Lines appended to the project's .gitignore (no dot, so it doesn't apply here)
 commands/starter.md   # /starter command for OpenCode
 README.md             # Minimal: install and use

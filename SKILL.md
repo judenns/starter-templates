@@ -140,7 +140,9 @@ Tell the user what was created and the next steps: `cd <name>` and `pnpm dev`.
 
 ## Extras
 
-If the user asks for more (e.g. "react with Tailwind"), finish and verify the base first, then add the extra from its official docs and rerun the verify line.
+If the user asks for more (e.g. "react with Tailwind"), finish and verify the base first, then add the extra from its official docs and rerun the verify line. Only add extras that were asked for.
+
+For Tailwind, put `@import 'tailwindcss';` first in `index.css` and delete `reset.css` and its import: Preflight replaces it. `global.css` stays in `@layer base`, so utilities override it.
 
 ## Rules
 
